@@ -6,8 +6,10 @@
   <body>
     <h1>Add New User</h1>
     <form action="{{ url_for('add_user') }}" method="post">
-      <label for="name">Name:</label><br />
-      <input type="text" id="name" name="name" required /><br />
+      <label for="firstName">First Name:</label><br />
+      <input type="text" id="firstName" name="firstName" required /><br />
+      <label for="lastName">Last Name:</label><br />
+      <input type="text" id="lastName" name="lastName" required /><br />
       <label for="genre">Favorite Genre:</label><br />
       <input type="text" id="genre" name="genre" required /><br />
       <input type="submit" value="Submit" />
