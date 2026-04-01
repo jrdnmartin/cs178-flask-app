@@ -17,8 +17,12 @@ def get_conn():
 
 def execute_query(query, args=()):
     """Executes a SELECT query and returns all rows as dictionaries."""
-    cur = get_conn().cursor(pymysql.cursors.DictCursor)
-    cur.execute(query, args)
-    rows = cur.fetchall()
-    cur.close()
-    return rows
+    conn = get_conn()
+    cur = conn.cursor(pymysql.cursors.DictCursor)
+    try:
+        cur.execute(query, args)
+        rows = cur.fetchall()
+        return rows
+    finally:
+        cur.close()
+        conn.close()
