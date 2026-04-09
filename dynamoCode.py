@@ -3,13 +3,30 @@
 
 from datetime import datetime, timezone
 from decimal import Decimal
+import os
 
 import boto3
+from botocore.exceptions import BotoCoreError, ClientError, NoRegionError
 
 DYNAMO_TABLE_NAME = 'leaderboard_scores'
 
-_dynamodb_resource = boto3.resource('dynamodb')
-_scores_table = _dynamodb_resource.Table(DYNAMO_TABLE_NAME)
+
+def _resolve_region():
+    """Pick AWS region from env and fall back to us-east-1 for class projects."""
+    return os.getenv('AWS_REGION') or os.getenv('AWS_DEFAULT_REGION') or 'us-east-1'
+
+
+def _get_scores_table():
+    """Create table resource lazily so module import never hard-fails."""
+    try:
+        dynamodb_resource = boto3.resource('dynamodb', region_name=_resolve_region())
+        return dynamodb_resource.Table(DYNAMO_TABLE_NAME)
+    except NoRegionError as exc:
+        raise RuntimeError(
+            "DynamoDB region is not configured. Set AWS_REGION or AWS_DEFAULT_REGION."
+        ) from exc
+    except (BotoCoreError, ClientError) as exc:
+        raise RuntimeError(f"Could not initialize DynamoDB table '{DYNAMO_TABLE_NAME}': {exc}") from exc
 
 
 def _to_decimal(value):
@@ -20,6 +37,7 @@ def _to_decimal(value):
 
 def save_score(user_id, player_name, category, score, session_id):
     """Save a completed game score to DynamoDB."""
+    scores_table = _get_scores_table()
     achieved_at = datetime.now(timezone.utc).isoformat()
     item = {
         'user_id': str(user_id),
@@ -29,17 +47,18 @@ def save_score(user_id, player_name, category, score, session_id):
         'category': category,
         'score': _to_decimal(score),
     }
-    _scores_table.put_item(Item=item)
+    scores_table.put_item(Item=item)
     return item
 
 
 def get_leaderboard(limit=25):
     """Return top scores from DynamoDB sorted by score descending."""
-    response = _scores_table.scan()
+    scores_table = _get_scores_table()
+    response = scores_table.scan()
     items = response.get('Items', [])
 
     while 'LastEvaluatedKey' in response:
-        response = _scores_table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+        response = scores_table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
         items.extend(response.get('Items', []))
 
     items.sort(key=lambda item: (int(item.get('score', 0)), item.get('achieved_at', '')), reverse=True)
@@ -48,11 +67,12 @@ def get_leaderboard(limit=25):
 
 def get_high_scores_by_category(limit_per_category=25):
     """Return grouped leaderboard data with one best score per player per category."""
-    response = _scores_table.scan()
+    scores_table = _get_scores_table()
+    response = scores_table.scan()
     items = response.get('Items', [])
 
     while 'LastEvaluatedKey' in response:
-        response = _scores_table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+        response = scores_table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
         items.extend(response.get('Items', []))
 
     # Keep only each account's best score in each category.
