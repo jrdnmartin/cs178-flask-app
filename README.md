@@ -1,4 +1,4 @@
-# [Your Project Name Here]
+# Higher or Lower: Country Edition
 
 **CS178: Cloud and Database Systems — Project #1**
 **Author:** Jordan Martin
@@ -16,8 +16,8 @@
 
 - **Flask** — Python web framework
 - **AWS EC2** — hosts the running Flask application
-- **AWS RDS (MySQL)** — relational database for [describe what you stored]
-- **AWS DynamoDB** — non-relational database for [describe what you stored]
+- **AWS RDS (MySQL)** — relational database for the `world` country dataset used by the game
+- **AWS DynamoDB** — non-relational database for leaderboard score records and completed games
 - **GitHub Actions** — auto-deploys code from GitHub to EC2 on push
 
 ---
@@ -27,11 +27,12 @@
 ```
 ProjectOne/
 ├── flaskapp.py          # Main Flask application — routes and app logic
-├── dbCode.py            # Database helper functions (MySQL connection + queries)
+├── dbCode.py            # MySQL helper functions for the world database
+├── dynamoCode.py        # DynamoDB helper functions for leaderboard scores
 ├── creds_sample.py      # Sample credentials file (see Credential Setup below)
 ├── templates/
 │   ├── home.html        # Landing page
-│   ├── [other].html     # Add descriptions for your other templates
+│   ├── ...
 ├── .gitignore           # Excludes creds.py and other sensitive files
 └── README.md
 ```
@@ -70,7 +71,7 @@ ProjectOne/
 The app is deployed on an AWS EC2 instance. To view the live version:
 
 ```
-http://[your-ec2-public-ip]:8080
+http://ec2-3-81-51-123.compute-1.amazonaws.com:8080/
 ```
 
 _(Note: the EC2 instance may not be running after project submission.)_
@@ -97,22 +98,23 @@ db = "your-database-name"
 
 ### SQL (MySQL on RDS)
 
-<!-- Briefly describe your relational database schema. What tables do you have? What are the key relationships? -->
+The project uses the `world` database on MySQL/RDS to power the country comparison gameplay. The Flask app queries the `country` table to fetch random countries and to retrieve stat values such as Population, GNP, and LifeExpectancy. This is the relational part of the project because the data is stored in a fixed table schema and accessed through SQL.
 
-**Example:**
+Current SQL usage:
 
-- `[TableName]` — stores [description]; primary key is `[key]`
-- `[TableName]` — stores [description]; foreign key links to `[other table]`
+- `country` — stores world-country data such as name, population, and GNP; primary key is `Code`
+- The game reads random rows from `country` to compare two countries during play
 
-The JOIN query used in this project: <!-- describe it in plain English -->
+The JOIN query used in this project combines `users`, `high_scores`, and `categories` to build a leaderboard in the SQL-backed version of the app.
 
 ### DynamoDB
 
-<!-- Describe your DynamoDB table. What is the partition key? What attributes does each item have? How does it connect to the rest of the app? -->
+The non-relational part of the project uses DynamoDB for leaderboard score records. Each completed game writes a score item into a DynamoDB table, which stores flexible event data without requiring joins or a rigid relational schema.
 
-- **Table name:** `[your-table-name]`
-- **Partition key:** `[key-name]`
-- **Used for:** [description]
+- **Table name:** `leaderboard_scores`
+- **Partition key:** `session_id`
+- **Sort key:** `achieved_at`
+- **Used for:** storing player name, category, score, and timestamp for completed games
 
 ---
 
@@ -120,10 +122,10 @@ The JOIN query used in this project: <!-- describe it in plain English -->
 
 | Operation | Route      | Description    |
 | --------- | ---------- | -------------- |
-| Create    | `/[route]` | [what it does] |
-| Read      | `/[route]` | [what it does] |
-| Update    | `/[route]` | [what it does] |
-| Delete    | `/[route]` | [what it does] |
+| Create    | `/create-user` | Creates a new user for scoring values to the database |
+| Read      | `/users` | Print all of the currently stored users |
+| Update    | `/users/<int:user_id>/edit` | Edit the username for any given user |
+| Delete    | `/users/<int:user_id>/delete` | Remove the user from the database |
 
 ---
 
@@ -135,4 +137,4 @@ The JOIN query used in this project: <!-- describe it in plain English -->
 
 ## AI Assistance
 
-<!-- List any AI tools you used (e.g., ChatGPT) and briefly describe what you used them for. Per course policy, AI use is allowed but must be cited in code comments and noted here. -->
+Used Github Copilot for help with styling, formatting, and some Jinja templated code. Additionally for random troubleshooting/bug fixes.

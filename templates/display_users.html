@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <title>Users List</title>
-    <!-- Bootstrap CSS for styling the table -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
@@ -20,8 +19,8 @@
                 {% for user in users %}
                 <tr>
                     <td>{{ user['Name'] }}</td>
-                    <td>{{ user['Population'] }}</td>
-                    <td>{{ user['GNP'] if user['GNP'] is not none else 'N/A' }}</td>
+                    <td>{{ user['Population']|format_number }}</td>
+                    <td>{{ user['GNP']|format_number if user['GNP'] is not none else 'N/A' }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

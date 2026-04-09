@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Official Country Languages</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Official Languages by Country</h2>
+        <p class="lead">This page uses a SQL JOIN between <code>country</code> and <code>countrylanguage</code>.</p>
+
+        <a href="{{ url_for('home') }}" class="btn btn-secondary mt-3">Back Home</a>
+
+        {% if languages %}
+        <table class="table table-bordered table-striped mt-3">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Country</th>
+                    <th>Language</th>
+                    <th>Population % Speaking</th>
+                    <th>Official?</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in languages %}
+                <tr>
+                    <td>{{ row['country_name'] }}</td>
+                    <td>{{ row['language'] }}</td>
+                    <td>{{ row['percentage']|format_number }}</td>
+                    <td>{{ 'Yes' if row['is_official'] == 'T' else 'No' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+            <div class="alert alert-info">No joined language data found.</div>
+        {% endif %}
+    </div>
+</body>
+</html>

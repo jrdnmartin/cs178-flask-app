@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Game Round</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .country-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .country-a {
+            background-color: #e7f3ff;
+            border: 2px solid #007bff;
+        }
+        .country-b {
+            background-color: #fff3cd;
+            border: 2px solid #ffc107;
+        }
+        .stat-display {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <h1>{{ category }} - Higher or Lower?</h1>
+                <p class="lead">Score: <strong>{{ score }}</strong> | Streak: <strong>{{ streak }}</strong></p>
+                
+                <div class="row mt-4">
+                    <div class="col-md-5">
+                        <div class="country-card country-a">
+                            <h3>Country A</h3>
+                            <h2>{{ country_a }}</h2>
+                            <div class="stat-display">{{ stat_a|format_number }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-2 d-flex align-items-center justify-content-center">
+                        <h2 style="color: #999;">VS</h2>
+                    </div>
+                    
+                    <div class="col-md-5">
+                        <div class="country-card country-b">
+                            <h3>Country B</h3>
+                            <h2>{{ country_b }}</h2>
+                            <div class="stat-display">?</div>
+                            <p style="margin-top: 20px; font-size: 14px; color: #666;">Is this higher or lower?</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Guess Form -->
+                <div class="row mt-4 justify-content-center">
+                    <div class="col-md-8">
+                        <form action="{{ url_for('game_guess') }}" method="POST">
+                            <div class="btn-group btn-block" role="group">
+                                <button type="submit" name="guess" value="higher" class="btn btn-success btn-lg">
+                                    ⬆️ Higher
+                                </button>
+                                <button type="submit" name="guess" value="lower" class="btn btn-danger btn-lg">
+                                    ⬇️ Lower
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="mt-4 text-center">
+                    <a href="{{ url_for('end_game') }}" class="btn btn-secondary">End Game</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

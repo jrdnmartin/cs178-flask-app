@@ -2,32 +2,45 @@
 <html lang="en">
 <head>
     <title>Home Page</title>
-    <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <!-- display a flash message here, if necessary -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
                     {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
             {% endfor %}
         {% endif %}
     {% endwith %}
     <div class="container">
-        <h1 class="mt-5">User Management System</h1>
+        <h1 class="mt-5">Higher or Lower: Country Edition</h1>
+        <p class="lead">Guess whether a country's statistic is higher or lower than another!</p>
+        
+        <h3 class="mt-4">Play the Game</h3>
         <div class="mt-3">
-            <!-- Add User Button -->
-            <a href="/add-user" class="btn btn-primary">Add User</a>
-            <!-- Delete User Button -->
-            <a href="/delete-user" class="btn btn-danger">Delete User</a>
-            <!-- Update User Button -->
-            <a href="/update-user" class="btn btn-secondary">Update User</a>
-            <!-- Display All Users Button -->
-            <a href="/display-users" class="btn btn-info">Display All Users</a>
+            <a href="/game-categories" class="btn btn-success btn-lg">Start Game</a>
+            <a href="/leaderboard" class="btn btn-warning btn-lg">View Leaderboard</a>
+        </div>
+        
+        <h3 class="mt-4">User Management</h3>
+        <div class="mt-3">
+            <a href="/create-user" class="btn btn-primary">Create New User</a>
+            <a href="/users" class="btn btn-info">View All Users</a>
+        </div>
+        
+        <h3 class="mt-4">Database Explorer</h3>
+        <div class="mt-3">
+            <a href="/display-users" class="btn btn-success">View Countries</a>
+            <a href="/country-languages" class="btn btn-info">View Official Languages (JOIN)</a>
         </div>
     </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Select Game Category</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <h1>Choose a Category</h1>
+                <p class="lead">Select a statistic to play the Higher or Lower game.</p>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        {% if users %}
+                            <div class="form-group mb-3">
+                                <label for="saved_user"><strong>Choose Saved Account</strong></label>
+                                <select class="form-control" id="saved_user" onchange="fillPlayerName()">
+                                    <option value="">-- Select an account to play --</option>
+                                    {% for user in users %}
+                                    <option value="{{ user['user_id'] }}" data-name="{{ user['display_name'] }}">{{ user['display_name'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <p class="text-muted mb-0">Create, edit, or delete accounts in the User Management section. The selected account is the account your scores are saved to.</p>
+                        {% else %}
+                            <div class="alert alert-warning mb-0">
+                                No saved accounts yet. Create one in <a href="{{ url_for('create_user') }}">User Management</a> before starting a game.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <div class="row mt-4">
+                    {% for category in categories %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ category.name }}</h5>
+                                <p class="card-text">{{ category.description }}</p>
+                                <a href="#" class="btn btn-primary btn-block" onclick="startGame('{{ category.id }}'); return false;">Play {{ category.name }}</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="mt-4">
+                    <a href="{{ url_for('home') }}" class="btn btn-secondary">Back Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function fillPlayerName() {
+            return;
+        }
+
+        function startGame(category) {
+            const accountSelect = document.getElementById('saved_user');
+            if (!accountSelect || !accountSelect.value) {
+                alert('Choose a saved account first.');
+                return;
+            }
+            const userId = accountSelect.value;
+            window.location.href = `{{ url_for('start_game', category='__CATEGORY__') }}`.replace('__CATEGORY__', category) + `?user_id=${encodeURIComponent(userId)}`;
+        }
+    </script>
+</body>
+</html>

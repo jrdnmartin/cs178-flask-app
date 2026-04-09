@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Guess Result</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .result-card {
+            text-align: center;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .correct {
+            background-color: #d4edda;
+            border: 2px solid #28a745;
+        }
+        .incorrect {
+            background-color: #f8d7da;
+            border: 2px solid #dc3545;
+        }
+        .country-detail {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                {% if result.correct %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" style="font-size: 18px;">
+                        <h4 class="alert-heading">✅ Correct!</h4>
+                        <p>Great guess! You earned 1 point.</p>
+                    </div>
+                    <div class="result-card correct">
+                        <h3>{{ result.country_a }} vs {{ result.country_b }}</h3>
+                        <div class="country-detail">
+                            <strong>{{ result.country_a }}</strong>: <span class="stat-value">{{ result.stat_a|format_number }}</span>
+                        </div>
+                        <div class="country-detail">
+                            <strong>{{ result.country_b }}</strong>: <span class="stat-value">{{ result.stat_b|format_number }}</span>
+                        </div>
+                        <p style="margin-top: 20px; font-size: 16px;">
+                            {{ result.country_b }} has <strong>{{ "HIGHER" if result.stat_b > result.stat_a else "LOWER" }}</strong> {{ result.category }}
+                        </p>
+                        <p style="color: #666; margin-top: 10px;">You guessed: <strong>{{ result.guess.upper() }}</strong> ✓</p>
+                    </div>
+                    <div class="alert alert-info">
+                        <strong>Current Score: {{ result.new_score }}</strong>
+                    </div>
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('game_round') }}" class="btn btn-primary btn-lg">Next Round</a>
+                        <a href="{{ url_for('end_game') }}" class="btn btn-secondary btn-lg">End Game</a>
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="font-size: 18px;">
+                        <h4 class="alert-heading">❌ Game Over!</h4>
+                        <p>Oops! That was incorrect.</p>
+                    </div>
+                    <div class="result-card incorrect">
+                        <h3>{{ result.country_a }} vs {{ result.country_b }}</h3>
+                        <div class="country-detail">
+                            <strong>{{ result.country_a }}</strong>: <span class="stat-value">{{ result.stat_a|format_number }}</span>
+                        </div>
+                        <div class="country-detail">
+                            <strong>{{ result.country_b }}</strong>: <span class="stat-value">{{ result.stat_b|format_number }}</span>
+                        </div>
+                        <p style="margin-top: 20px; font-size: 16px;">
+                            {{ result.country_b }} has <strong>{{ "HIGHER" if result.stat_b > result.stat_a else "LOWER" }}</strong> {{ result.category }}
+                        </p>
+                        <p style="color: #666; margin-top: 10px;">You guessed: <strong>{{ result.guess.upper() }}</strong> ✗</p>
+                    </div>
+                    <div class="alert alert-warning">
+                        <h5>Final Score: <strong>{{ result.final_score }}</strong></h5>
+                    </div>
+                    <div class="text-center mt-4">
+                        <a href="{{ url_for('game_categories') }}" class="btn btn-primary btn-lg">Play Again</a>
+                        <a href="{{ url_for('home') }}" class="btn btn-secondary btn-lg">Back Home</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Leaderboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .leaderboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        .medal {
+            font-size: 24px;
+            font-weight: bold;
+            width: 40px;
+            text-align: center;
+        }
+        .rank-1 .medal { color: #FFD700; }
+        .rank-2 .medal { color: #C0C0C0; } 
+        .rank-3 .medal { color: #CD7F32; }
+    </style>
+</head>
+<body>
+    <div class="leaderboard-header">
+        <div class="container">
+            <h1>🏆 Leaderboard</h1>
+            <p class="lead">Top account scores by category</p>
+        </div>
+    </div>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% set any_scores = false %}
+        {% for category_id in category_order %}
+            {% set category_scores = grouped_scores.get(category_id, []) %}
+            {% if category_scores %}
+                {% set any_scores = true %}
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <h3>{{ category_names.get(category_id, category_id) }}</h3>
+                        <table class="table table-hover table-striped">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Account</th>
+                                    <th>High Score</th>
+                                    <th>Achieved</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for score in category_scores %}
+                                {% set rank = loop.index %}
+                                <tr class="rank-{{ rank if rank <= 3 else 'other' }}">
+                                    <td class="medal">
+                                        {% if rank == 1 %}🥇{% elif rank == 2 %}🥈{% elif rank == 3 %}🥉{% else %}{{ rank }}{% endif %}
+                                    </td>
+                                    <td><strong>{{ score['player_name'] }}</strong></td>
+                                    <td><strong>{{ score['score'] }}</strong></td>
+                                    <td><small style="color: #666;">{{ score['achieved_at'][:10] if score['achieved_at'] else 'N/A' }}</small></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        {% if not any_scores %}
+            <div class="alert alert-info">
+                <p>No scores recorded yet. Start playing to appear on the leaderboard!</p>
+            </div>
+        {% endif %}
+
+        <div class="mt-4 mb-4">
+            <a href="{{ url_for('game_categories') }}" class="btn btn-primary">Play Game</a>
+            <a href="{{ url_for('home') }}" class="btn btn-secondary">Back Home</a>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
