@@ -32,7 +32,16 @@ ProjectOne/
 ├── creds_sample.py      # Sample credentials file (see Credential Setup below)
 ├── templates/
 │   ├── home.html        # Landing page
-│   ├── ...
+│   ├── country_languges.html # Page for the country language table
+│   ├── create_user.html # Page to create user
+│   ├── delete_user.html # Page to delete users
+│   ├── display_users.html # Page to display all countries
+│   ├── edit_user.html # Page to edit a user's name
+│   ├── game_categories.html # The main page to select a game category
+│   ├── game_result.html # The page that shows at the end of a game
+│   ├── game_round.html # The page that shows the content for the round of a game
+│   ├── leaderboard.html # The page displaying the leaderboard results
+│   ├── list_users.html # The page to display the users
 ├── .gitignore           # Excludes creds.py and other sensitive files
 └── README.md
 ```
