@@ -8,7 +8,7 @@
 
 ## Overview
 
-<!-- Describe your project in 2-4 sentences. What does it do? Who is it for? What problem does it solve? -->
+**Higher or Lower: Country Edition** is an interactive web-based game where players compare statistics between random countries and guess whether a country has a higher or lower value for a selected metric (population, GNP, life expectancy, surface area, or independence year). The app demonstrates cloud-native development by combining a Flask web tier on EC2 with both relational (MySQL) and non-relational (DynamoDB) databases, providing hands-on experience with multi-database architectures and AWS service integration. Players can create accounts, compete in multiple game categories, and see their scores on a live leaderboard.
 
 ---
 
@@ -131,7 +131,13 @@ The non-relational part of the project uses DynamoDB for leaderboard score recor
 
 ## Challenges and Insights
 
-<!-- What was the hardest part? What did you learn? Any interesting design decisions? -->
+**Challenges:**
+- **Hybrid Database Design:** Balancing where data belongs required careful decisions—user accounts and game metadata live in MySQL for consistency and joins, while game scores and leaderboard entries use DynamoDB for flexible schema and faster writes.
+- **Flask Deployment:** Running Flask in production with `nohup` required binding to `0.0.0.0` and ensuring the EC2 security group allows inbound traffic on port 8080; missing any step broke the public URL.
+
+**Insights:**
+- GitHub Actions can automate deployment, but manual troubleshooting of startup logs was essential to catch configuration errors that CI/CD alone would not surface.
+- Jinja2 templating and Flask's session management simplified game state tracking without needing a separate cache layer.
 
 ---
 
